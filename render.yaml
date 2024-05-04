@@ -1,0 +1,6 @@
+services:
+  - name: STT_API
+    type: web
+    env:
+      - key: PORT
+        value: 8080
