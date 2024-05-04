@@ -1,4 +1,0 @@
-services:
-  - name: web
-    env: python3.12
-    command: python app.py
