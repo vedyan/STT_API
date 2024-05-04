@@ -8,4 +8,5 @@ urllib3==2.2.1
 Wave==0.0.2
 Flask==3.0.3
 python-dotenv==1.0.1
-PyAudio==0.2.14
+sounddevice==0.4.6
+soundfile==0.12.1
