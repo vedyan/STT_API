@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Transcription</title>
+</head>
+<body>
+    <h1>Audio Transcription</h1>
+    <button id="record-btn">Start Recording</button>
+    <button id="transcribe-btn">Transcribe</button>
+    <div id="transcription-result"></div>
+
+    <script>
+        const recordBtn = document.getElementById('record-btn');
+        const transcribeBtn = document.getElementById('transcribe-btn');
+        const resultDiv = document.getElementById('transcription-result');
+
+        recordBtn.addEventListener('click', async () => {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const recorder = new MediaRecorder(stream);
+            const chunks = [];
+
+            recorder.ondataavailable = (e) => {
+                chunks.push(e.data);
+            };
+
+            recorder.onstop = async () => {
+                const audioBlob = new Blob(chunks, { type: 'audio/wav' });
+                const formData = new FormData();
+                formData.append('audio', audioBlob);
+
+                const response = await fetch('/transcribe', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                resultDiv.textContent = data.transcription;
+            };
+
+            recorder.start();
+            setTimeout(() => recorder.stop(), 5000); // Stop recording after 5 seconds
+        });
+
+        transcribeBtn.addEventListener('click', async () => {
+            const response = await fetch('/transcribe', {
+                method: 'POST',
+                body: new FormData()
+            });
+
+            const data = await response.json();
+            resultDiv.textContent = data.transcription;
+        });
+    </script>
+</body>
+</html>
